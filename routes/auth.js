@@ -1,5 +1,5 @@
 const express = require('express');
-const { save, login } = require('../models/User'); 
+const { register, login } = require('../models/User'); 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        await save(username, password, role); 
+        await register(username, password, role); 
         res.status(201).send('Utilisateur créé');
     } catch (error) {
         res.status(400).json({ error: 'Erreur lors de la création de l\'utilisateur', details: error });

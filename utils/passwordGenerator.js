@@ -1,8 +1,7 @@
 const crypto = require('crypto');
 
 function generateSecurePassword(length) {
-    if (typeof length !== 'number' || length <= 8 || length > 15) {
-        throw new Error('La longueur doit être un nombre entre 8 et 50 caractères.');
+    if (typeof length !== 'number' || length <= 8 || length > 100) {
     }
     
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]{}|;:,.<>?';

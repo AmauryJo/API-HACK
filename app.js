@@ -1,19 +1,26 @@
 require('dotenv').config();
 const express = require('express');
+const { db } = require('./config/database');
+
+const logMiddleware = require('./middlewares/logMiddleware');
+
 const authRoutes = require('./routes/auth'); 
 const passwordRoutes = require('./routes/password'); 
 const ddosRoutes = require('./routes/ddos'); 
-// const logMiddleware = require('./middlewares/logMiddleware')
+const logRoutes = require('./routes/logging'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// app.use(logMiddleware);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// MIDDLEWARE
+app.use(logMiddleware);
 
 app.use('/auth', authRoutes);
 app.use('/password', passwordRoutes);
 app.use('/ddos', ddosRoutes);
+app.use('/logging', logRoutes);
 
 app.listen(PORT, () => {
     console.log(`Serveur en cours d'exécution sur http://localhost:${PORT}`);

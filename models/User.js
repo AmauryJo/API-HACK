@@ -1,24 +1,5 @@
 const bcrypt = require('bcryptjs');
-
-const mysql = require('mysql');
-
-const db = mysql.createConnection({
-    host: '127.0.0.1', 
-    port: 8889,
-    user: 'root',      
-    password: 'root',  
-    database: 'api_kevin'
-});
-
-// CONNECTION TO MYSQL
-db.connect(err => {
-    if (err) {
-        console.error('Erreur de connexion à MySQL', err);
-        return;
-    }
-    console.log('Connecté à MySQL');
-});
-
+const { db } = require('../config/database');
 // HASH PASSWORD
 const hashPassword = async (password) => {
     return await bcrypt.hash(password, 10);
@@ -60,4 +41,17 @@ const login = async (username) => {
     });
 }
 
-module.exports = { register, login, hashPassword }; 
+const getUserByUsername = async (username) => {
+    const query = 'SELECT * FROM users WHERE username = ?';
+    return new Promise((resolve, reject) => {
+        db.query(query, [username], (err, results) => {
+            if (err) {
+                console.error('Erreur lors de la recherche :', err);
+                return reject(err);
+            }
+            resolve(results)
+        });
+    });
+};
+
+module.exports = { register, login, hashPassword, getUserByUsername }; 
