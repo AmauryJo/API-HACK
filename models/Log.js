@@ -2,19 +2,40 @@ const bcrypt = require('bcryptjs');
 const { db } = require('../config/database');
 
 
-const getAllLogs = async (count) => {
+const getAllLogs = async (quantity) => {
     const query = `SELECT * FROM logs LIMIT ?`;
-    return await db.query(query, [count]);
+    return new Promise((resolve, reject) => {
+        db.query(query, [quantity], (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        });
+    });
 }
 
-const getLogsByUser = async (id_user, count) => {
+const getLogsByUser = async (id_user, quantity) => {
     const query = `SELECT * FROM logs WHERE id_user = ? LIMIT ?`;
-    return await db.query(query, [id_user, count]);
+    return new Promise((resolve, reject) => {
+        db.query(query, [id_user, quantity], (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        });
+    });
 }
 
-const getLogsByFonctionnality = async (routes, count) => {
-    const query = `SELECT * FROM logs WHERE routes = ? LIMIT ?`;
-    return await db.query(query, [routes, count]);
+const getLogsByFunctionnality = async (id_functionnality, quantity) => {
+    const query = `SELECT * FROM logs WHERE id_functionnality = ? LIMIT ?`;
+    return new Promise((resolve, reject) => {
+        db.query(query, [id_functionnality, quantity], (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(results);
+        });
+    });
 }
 
 const insertLog = async (id_user, routes, method) => {
@@ -22,4 +43,4 @@ const insertLog = async (id_user, routes, method) => {
     return await db.query(query, [id_user, routes, method]);
 }
 
-module.exports = { getAllLogs, getLogsByUser, getLogsByFonctionnality, insertLog }; 
+module.exports = { getAllLogs, getLogsByUser, getLogsByFunctionnality, insertLog }; 

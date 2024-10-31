@@ -7,7 +7,7 @@ const logMiddleware = require('./middlewares/logMiddleware');
 const authRoutes = require('./routes/auth'); 
 const passwordRoutes = require('./routes/password'); 
 const ddosRoutes = require('./routes/ddos'); 
-const logRoutes = require('./routes/logging'); 
+const logRoutes = require('./routes/log'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,7 +20,7 @@ app.use(logMiddleware);
 app.use('/auth', authRoutes);
 app.use('/password', passwordRoutes);
 app.use('/ddos', ddosRoutes);
-app.use('/logging', logRoutes);
+app.use('/log', logRoutes);
 
 app.listen(PORT, () => {
     console.log(`Serveur en cours d'exécution sur http://localhost:${PORT}`);
