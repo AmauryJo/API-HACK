@@ -24,7 +24,7 @@ const hashPassword = async (password) => {
     return await bcrypt.hash(password, 10);
 };
 
-const save = async (username, password, role) => {
+const register = async (username, password, role) => {
     const hashedPassword = await hashPassword(password);
 
     if (role !== "admin" && role !== "user") {
@@ -60,4 +60,4 @@ const login = async (username) => {
     });
 }
 
-module.exports = { save, login, hashPassword }; 
+module.exports = { register, login, hashPassword }; 
