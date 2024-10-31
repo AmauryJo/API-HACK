@@ -4,9 +4,8 @@ const { generateSecurePassword } = require('../utils/passwordGenerator')
 
 const router = express.Router();
 
-router.post('/', async (req, res) => { // Changement ici
+router.post('/', async (req, res) => {
     const { bear, length } = req.body; 
-    console.log(bear);
 
     if (!bear) {
         return res.status(401).send('Token manquant');

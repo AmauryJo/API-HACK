@@ -10,7 +10,7 @@ const db = mysql.createConnection({
     database: 'api_kevin'
 });
 
-// Connexion à MySQL
+// CONNECTION TO MYSQL
 db.connect(err => {
     if (err) {
         console.error('Erreur de connexion à MySQL', err);
@@ -18,30 +18,34 @@ db.connect(err => {
     }
     console.log('Connecté à MySQL');
 });
-// on hash le mdp
+
+// HASH PASSWORD
 const hashPassword = async (password) => {
     return await bcrypt.hash(password, 10);
 };
 
-const save = async (username, password) => {
-    console.log("Paramètres reçus: ", username, password);
+const save = async (username, password, role) => {
     const hashedPassword = await hashPassword(password);
 
-    const query = 'INSERT INTO users (username, password) VALUES (?, ?)';
+    if (role !== "admin" && role !== "user") {
+        throw new Error('Role invalide');
+    }
+
+    const query = 'INSERT INTO users (username, password, role) VALUES (?, ?, ?)';
 
     return new Promise((resolve, reject) => {
-        db.query(query, [username, hashedPassword], (err, results) => {
+        db.query(query, [username, hashedPassword, role], (err, results) => {
             if (err) {
                 console.error('Erreur lors de l\'insertion :', err);
                 return reject(err);
             }
-            console.log('Insertion réussie :', results); // Affichez les résultats
+            console.log('Insertion réussie :', results);
             resolve(results);
         });
     });
 };
 
-// On récupère les données un user avec username
+// GET USER DATA FROM USERNAME
 const login = async (username) => {
     const query = 'SELECT * FROM users WHERE username = ?';
 

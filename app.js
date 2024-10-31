@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const authRoutes = require('./routes/auth'); 
 const passwordRoutes = require('./routes/password'); 
-const identityRoutes = require('./routes/identity'); 
+const ddosRoutes = require('./routes/ddos'); 
 // const logMiddleware = require('./middlewares/logMiddleware')
 
 const app = express();
@@ -13,12 +13,7 @@ app.use(express.json());
 
 app.use('/auth', authRoutes);
 app.use('/password', passwordRoutes);
-app.use('/identity', identityRoutes);
-
-// Route d'exemple'
-app.get('/', (req, res) => {
-    res.send('API');
-});
+app.use('/ddos', ddosRoutes);
 
 app.listen(PORT, () => {
     console.log(`Serveur en cours d'exécution sur http://localhost:${PORT}`);

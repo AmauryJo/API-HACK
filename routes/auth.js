@@ -7,10 +7,32 @@ const router = express.Router();
 
 
 router.post('/register', async (req, res) => {
-    const { username, password } = req.body; 
-    console.log("tentative de création ", req.body)
-;    try {
-        await save(username, password); 
+    const { username, password, bear, role } = req.body; 
+    console.log("tentative de création ", req.body);
+
+    if (!bear || !role) {
+        return res.status(401).send('Token ou role manquant');
+    }
+    else if (role !== "admin" && role !== "user") {
+        return res.status(401).send('Role invalide');
+    }
+
+    try {
+        const decodedToken = jwt.verify(bear, process.env.JWT_SECRET);
+
+        if (!decodedToken.userId) {
+            return res.status(401).send('Token invalide');
+        }
+        else if (decodedToken.role !== "admin") {
+            return res.status(401).send('Vous n\'avez pas les droits pour créer un utilisateur');
+        }
+
+    } catch (error) {
+        return res.status(401).send('Token invalide ou expiré');
+    }
+
+    try {
+        await save(username, password, role); 
         res.status(201).send('Utilisateur créé');
     } catch (error) {
         res.status(400).json({ error: 'Erreur lors de la création de l\'utilisateur', details: error });
@@ -23,7 +45,7 @@ router.post('/login', async (req, res) => {
 
     if (user && bcrypt.compareSync(password, user.password)) { 
         const token = jwt.sign(
-            { userId: user.id }, 
+            { userId: user.id, role: user.role }, 
             process.env.JWT_SECRET, 
             { expiresIn: '24h' }
         );
