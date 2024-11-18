@@ -1,9 +1,6 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import { generateSecurePassword } from '../utils/passwordGenerator.js';
-import dotenv from 'dotenv';
 
-dotenv.config();
 const router = express.Router();
 
 /**
@@ -36,21 +33,7 @@ const router = express.Router();
  *         description: Erreur de validation
  */
 router.post('/', async (req, res) => {
-    const { bear, length } = req.body; 
-
-    if (!bear) {
-        return res.status(401).send('Token manquant');
-    }
-
-    try {
-        const decodedToken = jwt.verify(bear, process.env.JWT_SECRET);
-
-        if (!decodedToken.userId) {
-            return res.status(401).send('Token invalide');
-        }
-    } catch (error) {
-        return res.status(401).send('Token invalide ou expiré');
-    }
+    const { length } = req.body; 
 
     try {
         if (length < 8 || length > 100) {

@@ -1,9 +1,6 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import { ddos } from '../utils/ddos.js';
 
-dotenv.config();
 const router = express.Router();
 
 /**
@@ -51,22 +48,7 @@ const router = express.Router();
  */
 
 router.post('/', async (req, res) => {
-    const { bear, ip, amount } = req.body;
-    console.log(req.body);
-
-    if (!bear || !ip || !amount) {
-        return res.status(401).send('Token ou adresse ip ou nombre de requêtes manquants');
-    }
-
-    try {
-        const decodedToken = jwt.verify(bear, process.env.JWT_SECRET);
-
-        if (!decodedToken.userId) {
-            return res.status(401).send('Token invalide');
-        }
-    } catch (error) {
-        return res.status(401).send('Token invalide ou expiré');
-    }
+    const { ip, amount } = req.body;
 
     try {
         console.log("on appel la fonction ddos");

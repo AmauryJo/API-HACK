@@ -1,9 +1,6 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import { getAllLogs, getLogsByUser, getLogsByFunctionnality } from '../models/Log.js';
-import dotenv from 'dotenv';
 
-dotenv.config();
 const router = express.Router();
 
 /**
@@ -81,25 +78,7 @@ const router = express.Router();
  */
 
 router.post('/', async (req, res) => {
-    const { bear, quantity = 10 } = req.body; 
-
-    if (!bear) {
-        return res.status(401).json({ error: 'Token manquant' });
-    }
-
-    try {
-        const decodedToken = jwt.verify(bear, process.env.JWT_SECRET);
-
-        if (!decodedToken.userId || !decodedToken.role) {
-            return res.status(401).json({ error: 'Token invalide' });
-        }
-        else if (decodedToken.role !== "admin") {
-            return res.status(401).json({ error: 'Vous n\'avez pas les droits pour voir les logs' });
-        }
-        
-    } catch (error) {
-        return res.status(401).json({ error: 'Token invalide ou expiré' });
-    }
+    const { quantity = 10 } = req.body; 
 
     try {
         const logs = await getAllLogs(quantity);
@@ -112,25 +91,7 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/user', async (req, res) => {
-    const {bear, quantity = 10, id_user } = req.body;
-
-    if (!bear) {
-        return res.status(401).json({ error: 'Token manquant' });
-    }
-
-    try {
-        const decodedToken = jwt.verify(bear, process.env.JWT_SECRET);
-
-        if (!decodedToken.userId || !decodedToken.role) {
-            return res.status(401).json({ error: 'Token invalide' });
-        }
-        else if (decodedToken.role !== "admin") {
-            return res.status(401).json({ error: 'Vous n\'avez pas les droits pour voir les logs' });
-        }
-        
-    } catch (error) {
-        return res.status(401).json({ error: 'Token invalide ou expiré' });
-    }
+    const { quantity = 10, id_user } = req.body;
 
     try {
         if (quantity > 100) {
@@ -145,24 +106,7 @@ router.post('/user', async (req, res) => {
 });
 
 router.post('/functionnality', async (req, res) => {
-    const {bear, quantity = 10, id_functionnality } = req.body;
-    if (!bear) {
-        return res.status(401).json({ error: 'Token manquant' });
-    }
-
-    try {
-        const decodedToken = jwt.verify(bear, process.env.JWT_SECRET);
-
-        if (!decodedToken.userId || !decodedToken.role) {
-            return res.status(401).json({ error: 'Token invalide' });
-        }
-        else if (decodedToken.role !== "admin") {
-            return res.status(401).json({ error: 'Vous n\'avez pas les droits pour voir les logs' });
-        }
-        
-    } catch (error) {
-        return res.status(401).json({ error: 'Token invalide ou expiré' });
-    }
+    const { quantity = 10, id_functionnality } = req.body;
 
     try {
         if (quantity > 100) {
