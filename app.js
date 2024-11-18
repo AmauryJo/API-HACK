@@ -9,7 +9,7 @@ import mailcheckerRoutes from './routes/mailchecker.js';
 import logRoutes from './routes/log.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpecs from './swagger.js';
-
+import passwordcheckerRoutes from './routes/passwordchecker.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -23,7 +23,7 @@ app.use('/password', passwordRoutes);
 app.use('/ddos', ddosRoutes);
 app.use('/mailchecker', mailcheckerRoutes);
 app.use('/log', logRoutes);
-
+app.use('/passwordchecker', passwordcheckerRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 app.get("/swagger.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
