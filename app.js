@@ -8,6 +8,7 @@ import passwordRoutes from './routes/password.js';
 import ddosRoutes from './routes/ddos.js';
 import mailcheckerRoutes from './routes/mailchecker.js';
 import logRoutes from './routes/log.js';
+import subdomainfinderRoutes from './routes/subdomainfinder.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpecs from './swagger.js';
 import passwordcheckerRoutes from './routes/passwordchecker.js';
@@ -26,6 +27,7 @@ app.use('/ddos', verifyToken, ddosRoutes);
 app.use('/mailchecker', verifyToken, mailcheckerRoutes);
 app.use('/log', verifyToken, logRoutes);
 app.use('/passwordchecker', verifyToken, passwordcheckerRoutes);
+app.use('/subdomainfinder', verifyToken, subdomainfinderRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
 app.get("/swagger.json", (req, res) => {
     res.setHeader("Content-Type", "application/json");
