@@ -1,5 +1,6 @@
-const bcrypt = require('bcryptjs');
-const { db } = require('../config/database');
+import bcrypt from 'bcryptjs';
+import { db } from '../config/database.js';
+
 // HASH PASSWORD
 const hashPassword = async (password) => {
     return await bcrypt.hash(password, 10);
@@ -54,4 +55,4 @@ const getUserByUsername = async (username) => {
     });
 };
 
-module.exports = { register, login, hashPassword, getUserByUsername }; 
+export { register, login, hashPassword, getUserByUsername }; 

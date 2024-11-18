@@ -24,5 +24,5 @@ async function checkMail(mail) {
     }
 }
 
-module.exports = { checkMail };
+export { checkMail };
 

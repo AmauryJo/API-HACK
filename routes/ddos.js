@@ -1,9 +1,10 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
-const router = express.Router();
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import { ddos } from '../utils/ddos.js';
 
-const { ddos } = require('../utils/ddos')
+dotenv.config();
+const router = express.Router();
 
 /**
  * @swagger
@@ -78,4 +79,4 @@ router.post('/', async (req, res) => {
     res.status(200).send('Requêtes envoyées');
 });
 
-module.exports = router;
+export default router;

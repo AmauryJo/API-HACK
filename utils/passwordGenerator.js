@@ -1,5 +1,3 @@
-const crypto = require('crypto');
-
 function generateSecurePassword(length) {
     if (typeof length !== 'number' || length <= 8 || length > 100) {
     }
@@ -13,4 +11,4 @@ function generateSecurePassword(length) {
     return password;
 }
 
-module.exports = { generateSecurePassword };
+export { generateSecurePassword };

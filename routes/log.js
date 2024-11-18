@@ -1,7 +1,9 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const { getAllLogs, getLogsByUser, getLogsByFunctionnality } = require('../models/Log');
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { getAllLogs, getLogsByUser, getLogsByFunctionnality } from '../models/Log.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const router = express.Router();
 
 /**
@@ -175,4 +177,4 @@ router.post('/functionnality', async (req, res) => {
 
 });
     
-module.exports = router;
+export default router;

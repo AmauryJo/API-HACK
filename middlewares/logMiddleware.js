@@ -1,6 +1,6 @@
-const { db } = require('../config/database');
-const { getUserByUsername } = require('../models/User');
-const jwt = require('jsonwebtoken');
+import { db } from '../config/database.js';
+import { getUserByUsername } from '../models/User.js';
+import jwt from 'jsonwebtoken';
 
 const insertLog = async (id_user, routes, method, id_functionnality) => {
     const query = `INSERT INTO logs (id_user, routes, method, id_functionnality) VALUES (?, ?, ?, ?)`;
@@ -55,4 +55,4 @@ const logMiddleware = async(req, res, next) => {
     next();
 };
 
-module.exports = logMiddleware;
+export default logMiddleware;

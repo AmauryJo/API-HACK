@@ -1,7 +1,9 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const { checkMail } = require('../utils/mailChecker')
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { checkMail } from '../utils/mailChecker.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const router = express.Router();
 
 router.post('/', async (req, res) => {
@@ -34,4 +36,4 @@ router.post('/', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

@@ -1,18 +1,14 @@
-require('dotenv').config();
-const express = require('express');
-const { db } = require('./config/database');
-
-const logMiddleware = require('./middlewares/logMiddleware');
-
-const authRoutes = require('./routes/auth'); 
-const passwordRoutes = require('./routes/password'); 
-const ddosRoutes = require('./routes/ddos'); 
-const mailcheckerRoutes = require('./routes/mailchecker'); 
-const logRoutes = require('./routes/log'); 
-
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpecs = require('./swagger');
-
+import 'dotenv/config';
+import express from 'express';
+import { db } from './config/database.js';
+import logMiddleware from './middlewares/logMiddleware.js';
+import authRoutes from './routes/auth.js';
+import passwordRoutes from './routes/password.js';
+import ddosRoutes from './routes/ddos.js';
+import mailcheckerRoutes from './routes/mailchecker.js';
+import logRoutes from './routes/log.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpecs from './swagger.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,4 +34,4 @@ app.listen(PORT, () => {
     console.log(`Serveur en cours d'exécution sur http://localhost:${PORT}`);
 });
 
-module.exports = {app};
+export { app };

@@ -1,7 +1,9 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const { generateSecurePassword } = require('../utils/passwordGenerator')
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import { generateSecurePassword } from '../utils/passwordGenerator.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const router = express.Router();
 
 /**
@@ -62,4 +64,4 @@ router.post('/', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
