@@ -7,6 +7,7 @@ const logMiddleware = require('./middlewares/logMiddleware');
 const authRoutes = require('./routes/auth'); 
 const passwordRoutes = require('./routes/password'); 
 const ddosRoutes = require('./routes/ddos'); 
+const mailcheckerRoutes = require('./routes/mailchecker'); 
 const logRoutes = require('./routes/log'); 
 
 const swaggerUi = require('swagger-ui-express');
@@ -24,6 +25,7 @@ app.use(logMiddleware);
 app.use('/auth', authRoutes);
 app.use('/password', passwordRoutes);
 app.use('/ddos', ddosRoutes);
+app.use('/mailchecker', mailcheckerRoutes);
 app.use('/log', logRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));

@@ -38,8 +38,7 @@ const logMiddleware = async(req, res, next) => {
             break;
     }
     if (!bear && !username){
-        console.log('Erreur log middleware');
-
+        console.log("Tentative d'accès à la route sans identification");
     }
     else if (!bear){
         const user = await getUserByUsername(username);
