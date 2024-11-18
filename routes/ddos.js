@@ -5,6 +5,50 @@ const router = express.Router();
 
 const { ddos } = require('../utils/ddos')
 
+/**
+ * @swagger
+ * tags:
+ *   name: DDOS
+ *   description: Fonctionnalités DDOS
+ */
+
+/**
+ * @swagger
+ * /ddos:
+ *   post:
+ *     summary: Envoyer des requêtes multiples
+ *     tags: [DDOS]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - bear
+ *               - ip
+ *               - amount
+ *             properties:
+ *               bear:
+ *                 type: string
+ *                 description: Token JWT
+ *               ip:
+ *                 type: string
+ *                 description: Adresse IP cible
+ *               amount:
+ *                 type: integer
+ *                 description: Nombre de requêtes à envoyer
+ *     responses:
+ *       200:
+ *         description: Requêtes envoyées avec succès
+ *       401:
+ *         description: Token invalide
+ *       500:
+ *         description: Erreur serveur
+ */
+
 router.post('/', async (req, res) => {
     const { bear, ip, amount } = req.body;
     console.log(req.body);

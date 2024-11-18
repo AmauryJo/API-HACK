@@ -5,7 +5,54 @@ const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Authentification
+ *   description: Gestion de l'authentification
+ */
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Créer un nouvel utilisateur
+ *     tags: [Authentification]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *               - bear
+ *               - role
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Nom d'utilisateur
+ *               password:
+ *                 type: string
+ *                 description: Mot de passe
+ *               bear:
+ *                 type: string
+ *                 description: Token JWT admin
+ *               role:
+ *                 type: string
+ *                 enum: [admin, user]
+ *                 description: Rôle de l'utilisateur
+ *     responses:
+ *       201:
+ *         description: Utilisateur créé avec succès
+ *       401:
+ *         description: Non autorisé
+ *       400:
+ *         description: Erreur de création
+ */
 router.post('/register', async (req, res) => {
     const { username, password, bear, role } = req.body; 
     console.log("tentative de création ", req.body);

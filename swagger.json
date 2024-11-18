@@ -1,0 +1,294 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "API-HACK",
+      "version": "1.0.0",
+      "description": "Documentation de l'API-HACK"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000",
+        "description": "Serveur de développement"
+      }
+    ],
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    },
+    "paths": {
+      "/auth/register": {
+        "post": {
+          "summary": "Créer un nouvel utilisateur",
+          "tags": [
+            "Authentification"
+          ],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "username",
+                    "password",
+                    "bear",
+                    "role"
+                  ],
+                  "properties": {
+                    "username": {
+                      "type": "string",
+                      "description": "Nom d'utilisateur"
+                    },
+                    "password": {
+                      "type": "string",
+                      "description": "Mot de passe"
+                    },
+                    "bear": {
+                      "type": "string",
+                      "description": "Token JWT admin"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "admin",
+                        "user"
+                      ],
+                      "description": "Rôle de l'utilisateur"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Utilisateur créé avec succès"
+            },
+            "400": {
+              "description": "Erreur de création"
+            },
+            "401": {
+              "description": "Non autorisé"
+            }
+          }
+        }
+      },
+      "/ddos": {
+        "post": {
+          "summary": "Envoyer des requêtes multiples",
+          "tags": [
+            "DDOS"
+          ],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "bear",
+                    "ip",
+                    "amount"
+                  ],
+                  "properties": {
+                    "bear": {
+                      "type": "string",
+                      "description": "Token JWT"
+                    },
+                    "ip": {
+                      "type": "string",
+                      "description": "Adresse IP cible"
+                    },
+                    "amount": {
+                      "type": "integer",
+                      "description": "Nombre de requêtes à envoyer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Requêtes envoyées avec succès"
+            },
+            "401": {
+              "description": "Token invalide"
+            },
+            "500": {
+              "description": "Erreur serveur"
+            }
+          }
+        }
+      },
+      "/log": {
+        "post": {
+          "summary": "Récupérer tous les logs",
+          "tags": [
+            "Logs"
+          ],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "bear"
+                  ],
+                  "properties": {
+                    "bear": {
+                      "type": "string",
+                      "description": "Token JWT admin"
+                    },
+                    "quantity": {
+                      "type": "integer",
+                      "default": 10,
+                      "description": "Nombre de logs à récupérer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Logs récupérés avec succès"
+            },
+            "401": {
+              "description": "Non autorisé"
+            }
+          }
+        }
+      },
+      "/log/user": {
+        "post": {
+          "summary": "Récupérer les logs d'un utilisateur spécifique",
+          "tags": [
+            "Logs"
+          ],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "bear",
+                    "id_user"
+                  ],
+                  "properties": {
+                    "bear": {
+                      "type": "string",
+                      "description": "Token JWT admin"
+                    },
+                    "id_user": {
+                      "type": "integer",
+                      "description": "ID de l'utilisateur"
+                    },
+                    "quantity": {
+                      "type": "integer",
+                      "default": 10,
+                      "maximum": 100,
+                      "description": "Nombre de logs à récupérer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Logs utilisateur récupérés"
+            },
+            "401": {
+              "description": "Non autorisé"
+            }
+          }
+        }
+      },
+      "/password": {
+        "post": {
+          "summary": "Génère un mot de passe sécurisé",
+          "tags": [
+            "Password"
+          ],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bear": {
+                      "type": "string",
+                      "description": "Token JWT"
+                    },
+                    "length": {
+                      "type": "number",
+                      "description": "Longueur du mot de passe"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Mot de passe généré avec succès"
+            },
+            "400": {
+              "description": "Erreur de validation"
+            },
+            "401": {
+              "description": "Token manquant ou invalide"
+            }
+          }
+        }
+      }
+    },
+    "tags": [
+      {
+        "name": "Authentification",
+        "description": "Gestion de l'authentification"
+      },
+      {
+        "name": "DDOS",
+        "description": "Fonctionnalités DDOS"
+      },
+      {
+        "name": "Logs",
+        "description": "Gestion des logs"
+      }
+    ]
+  }

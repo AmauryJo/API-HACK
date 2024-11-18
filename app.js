@@ -9,6 +9,10 @@ const passwordRoutes = require('./routes/password');
 const ddosRoutes = require('./routes/ddos'); 
 const logRoutes = require('./routes/log'); 
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpecs = require('./swagger');
+
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -21,6 +25,12 @@ app.use('/auth', authRoutes);
 app.use('/password', passwordRoutes);
 app.use('/ddos', ddosRoutes);
 app.use('/log', logRoutes);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+app.get("/swagger.json", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(swaggerSpecs);
+});
 
 app.listen(PORT, () => {
     console.log(`Serveur en cours d'exécution sur http://localhost:${PORT}`);

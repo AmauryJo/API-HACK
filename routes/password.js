@@ -4,6 +4,35 @@ const { generateSecurePassword } = require('../utils/passwordGenerator')
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /password:
+ *   post:
+ *     summary: Génère un mot de passe sécurisé
+ *     tags: [Password]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               bear:
+ *                 type: string
+ *                 description: Token JWT
+ *               length:
+ *                 type: number
+ *                 description: Longueur du mot de passe
+ *     responses:
+ *       201:
+ *         description: Mot de passe généré avec succès
+ *       401:
+ *         description: Token manquant ou invalide
+ *       400:
+ *         description: Erreur de validation
+ */
 router.post('/', async (req, res) => {
     const { bear, length } = req.body; 
 

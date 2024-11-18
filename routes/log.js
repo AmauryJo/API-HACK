@@ -4,6 +4,80 @@ const { getAllLogs, getLogsByUser, getLogsByFunctionnality } = require('../model
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Logs
+ *   description: Gestion des logs
+ */
+
+/**
+ * @swagger
+ * /log:
+ *   post:
+ *     summary: Récupérer tous les logs
+ *     tags: [Logs]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - bear
+ *             properties:
+ *               bear:
+ *                 type: string
+ *                 description: Token JWT admin
+ *               quantity:
+ *                 type: integer
+ *                 default: 10
+ *                 description: Nombre de logs à récupérer
+ *     responses:
+ *       201:
+ *         description: Logs récupérés avec succès
+ *       401:
+ *         description: Non autorisé
+ */
+
+/**
+ * @swagger
+ * /log/user:
+ *   post:
+ *     summary: Récupérer les logs d'un utilisateur spécifique
+ *     tags: [Logs]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - bear
+ *               - id_user
+ *             properties:
+ *               bear:
+ *                 type: string
+ *                 description: Token JWT admin
+ *               id_user:
+ *                 type: integer
+ *                 description: ID de l'utilisateur
+ *               quantity:
+ *                 type: integer
+ *                 default: 10
+ *                 maximum: 100
+ *                 description: Nombre de logs à récupérer
+ *     responses:
+ *       201:
+ *         description: Logs utilisateur récupérés
+ *       401:
+ *         description: Non autorisé
+ */
+
 router.post('/', async (req, res) => {
     const { bear, quantity = 10 } = req.body; 
 
