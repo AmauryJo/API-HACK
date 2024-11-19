@@ -88,6 +88,45 @@ router.post('/register', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Connecter un utilisateur
+ *     tags: [Authentification]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: Nom d'utilisateur
+ *               password:
+ *                 type: string
+ *                 description: Mot de passe
+ *     responses:
+ *       200:
+ *         description: Connexion réussie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Utilisateur connecté
+ *                 token:
+ *                   type: string
+ *                   description: Token JWT pour l'authentification
+ *       401:
+ *         description: Identifiants invalides
+ */
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     const user = await login(username);

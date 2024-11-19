@@ -3,6 +3,53 @@ import { subDomainFinder } from '../utils/subDomainFinder.js';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /subdomainfinder:
+ *   post:
+ *     summary: Recherche les sous-domaines d'un domaine donné
+ *     tags: [Domain]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - domain
+ *             properties:
+ *               domain:
+ *                 type: string
+ *                 description: Le domaine à analyser
+ *                 example: "example.com"
+ *     responses:
+ *       201:
+ *         description: Sous-domaines trouvés avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Message de confirmation
+ *                 domainData:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Liste des sous-domaines trouvés
+ *       400:
+ *         description: Erreur de requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: object
+ */
 router.post('/', async (req, res) => {
     const { domain } = req.body; 
 

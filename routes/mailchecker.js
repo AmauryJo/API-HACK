@@ -3,6 +3,48 @@ import { checkMail } from '../utils/mailChecker.js';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /mailchecker:
+ *   post:
+ *     summary: Vérifie la validité d'une adresse email
+ *     tags: [Email]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - mail
+ *             properties:
+ *               mail:
+ *                 type: string
+ *                 description: L'adresse email à vérifier
+ *     responses:
+ *       201:
+ *         description: Email vérifié avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 isMailValid:
+ *                   type: boolean
+ *       400:
+ *         description: Erreur de requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: object
+ */
 router.post('/', async (req, res) => {
     const { mail } = req.body; 
 
