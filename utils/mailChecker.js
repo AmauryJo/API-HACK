@@ -1,16 +1,20 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 async function checkMail(mail) {
     try {
-        const API_KEY = 'e9110a6b18d4becc248f0997a86fa47e8e6f07b1';
+        const API_KEY = process.env.HUNTER_API_KEY;
         const response = await fetch(
             `https://api.hunter.io/v2/email-verifier?email=${mail}&api_key=${API_KEY}`
         );
         const data = await response.json();
-        console.log(data);
 
         const mailValid = data?.data?.status;
+        const score = data?.data?.score;
 
-        if(mailValid && mailValid !== 'invalid') {
-            return true;
+        if( mailValid !== 'invalid') {
+            return { mailValid, score };
         }
         else if (mailValid === 'invalid') {
             return false;
