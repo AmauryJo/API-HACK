@@ -14,7 +14,7 @@ const router = express.Router();
  * @swagger
  * /ddos:
  *   post:
- *     summary: Envoyer des requêtes multiples
+ *     summary: Envoyer des requêtes multiples à une adresse IP cible
  *     tags: [DDOS]
  *     security:
  *       - bearerAuth: []
@@ -31,34 +31,44 @@ const router = express.Router();
  *             properties:
  *               bear:
  *                 type: string
- *                 description: Token JWT
+ *                 description: Token JWT pour l'authentification
  *               ip:
  *                 type: string
- *                 description: Adresse IP cible
+ *                 description: Adresse IP cible pour les requêtes
  *               amount:
  *                 type: integer
  *                 description: Nombre de requêtes à envoyer
  *     responses:
  *       200:
  *         description: Requêtes envoyées avec succès
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Requêtes envoyées"
+ *               details: []
  *       401:
- *         description: Token invalide
+ *         description: Token invalide ou manquant
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Token invalide"
  *       500:
- *         description: Erreur serveur
+ *         description: Erreur serveur lors de l'envoi des requêtes
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Erreur lors de l'envoi des requêtes"
  */
 
 router.post('/', async (req, res) => {
     const { ip, amount } = req.body;
-
     try {
         console.log("on appel la fonction ddos");
-        await ddos(ip, amount);
-        console.log("ddos terminé");
+        var ddosList = await ddos(ip, amount);
+        return res.status(200).send(ddosList);
     } catch (error) {
         return res.status(500).send('Erreur lors de l\'envoi des requêtes');
     }
-
-    res.status(200).send('Requêtes envoyées');
 });
 
 export default router;
