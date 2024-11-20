@@ -138,9 +138,9 @@ router.post('/login', async (req, res) => {
             { expiresIn: '24h' }
         );
         console.log("utilisateur connecté on lui donne son token");
-        res.status(200).json({ message: 'Utilisateur connecté', token });
+        res.status(200).json({ success: true, message: 'Utilisateur connecté', token });
     } else {
-        res.status(401).send('Identifiants invalides');
+        res.status(401).json({ success: false, message: 'Identifiants invalides' });
     }
 });
 

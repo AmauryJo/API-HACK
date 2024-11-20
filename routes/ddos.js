@@ -65,9 +65,9 @@ router.post('/', async (req, res) => {
     try {
         console.log("on appel la fonction ddos");
         var ddosList = await ddos(ip, amount);
-        return res.status(200).send(ddosList);
+        return res.status(200).json({ success: true, message: "Requêtes envoyées", ddosList: ddosList });
     } catch (error) {
-        return res.status(500).send('Erreur lors de l\'envoi des requêtes');
+        return res.status(500).json({ success: false, error: 'Erreur lors de l\'envoi des requêtes' });
     }
 });
 

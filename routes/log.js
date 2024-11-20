@@ -110,13 +110,13 @@ router.post('/functionnality', async (req, res) => {
 
     try {
         if (quantity > 100) {
-            return res.status(401).json({ error: 'La quantité de logs maximum est de 100' });
+            return res.status(401).json({ success: false, error: 'La quantité de logs maximum est de 100' });
         }
 
         const logs = await getLogsByFunctionnality(id_functionnality, quantity);
-        res.status(201).json({ message: 'Logs récupérés', logs: logs });
+        res.status(201).json({ success: true, message: 'Logs récupérés', logs: logs });
     } catch (error) {
-        res.status(400).json({ error: 'Erreur lors de la récupération des logs', details: error });
+        res.status(400).json({ success: false, error: 'Erreur lors de la récupération des logs', details: error });
     }
 
 });

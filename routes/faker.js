@@ -53,10 +53,10 @@ router.post('/', async (req, res) => {
         const tempFaker = await fakerJS(sex);
         console.log(tempFaker);
         const { firstName, lastName, fakeMail, job, phone, location, birthDate } = tempFaker;
-        res.status(201).json({ firstName, lastName, fakeMail, job, phone, location, birthDate }); 
+        res.status(201).json({ success: true, firstName, lastName, fakeMail, job, phone, location, birthDate }); 
 
     } catch (error) {
-        res.status(400).json({ error: "Erreur lors de la génération de l'identité ", details: error });
+        res.status(400).json({ success: false, error: "Erreur lors de la génération de l'identité ", details: error });
     }
 });
 

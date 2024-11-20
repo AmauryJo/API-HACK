@@ -55,14 +55,14 @@ router.post('/', async (req, res) => {
 
     try {
         if (!domain) {
-            return res.status(400).json({ error: 'Le domaine est requis' });
+            return res.status(400).json({ success: false, error: 'Le domaine est requis' });
         }
 
         const domainData = await subDomainFinder(domain);
-        res.status(201).json({ message: 'Sous domaines récupérés', domainData: domainData });
+        res.status(201).json({ success: true, message: 'Sous domaines récupérés', domainData: domainData });
 
     } catch (error) {
-        res.status(400).json({ error: 'Erreur lors de la vérification du domaine', details: error });
+        res.status(400).json({ success: false, error: 'Erreur lors de la vérification du domaine', details: error });
     }
 });
 

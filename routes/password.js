@@ -37,13 +37,13 @@ router.post('/', async (req, res) => {
 
     try {
         if (length < 8 || length > 100) {
-            return res.status(400).json({ error: 'La longueur du mot de passe doit être entre 8 et 100 caractères' });
+            return res.status(400).json({ success: false, error: 'La longueur du mot de passe doit être entre 8 et 100 caractères' });
         }
         const generatedPassword = await generateSecurePassword(length);
-        res.status(201).json({ message: 'Mot de passe créé', password: generatedPassword }); 
+        res.status(201).json({ success: true, message: 'Mot de passe créé', password: generatedPassword }); 
 
     } catch (error) {
-        res.status(400).json({ error: 'Erreur lors de la création du mot de passe', details: error });
+        res.status(400).json({ success: false, error: 'Erreur lors de la création du mot de passe', details: error });
     }
 });
 

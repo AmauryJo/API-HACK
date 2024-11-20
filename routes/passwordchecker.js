@@ -49,18 +49,18 @@ router.post('/', async (req, res) => {
 
     try {
         if (!password) {
-            return res.status(400).json({ error: 'Le mot de passe est requis' });
+            return res.status(400).json({ success: false, error: 'Le mot de passe est requis' });
         }
 
         const passwordValid = await passwordChecker(password);
         if (passwordValid) {
-            res.status(201).json({ response: "Le mot de passe est dans la liste des mots de passe communs" });
+            res.status(201).json({ success: true, response: "Le mot de passe est dans la liste des mots de passe communs" });
         } else {
-            res.status(201).json({ response: "Le mot de passe n'est pas dans la liste des mots de passe communs" });
+            res.status(201).json({ success: true, response: "Le mot de passe n'est pas dans la liste des mots de passe communs" });
         }
 
     } catch (error) {
-        res.status(400).json({ error: 'Erreur lors de la vérification du mot de passe', details: error });
+        res.status(400).json({ success: false, error: 'Erreur lors de la vérification du mot de passe', details: error });
     }
 });
 

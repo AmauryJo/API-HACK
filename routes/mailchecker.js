@@ -50,14 +50,14 @@ router.post('/', async (req, res) => {
 
     try {
         if (!mail) {
-            return res.status(400).json({ error: 'Le mail est requis' });
+            return res.status(400).json({ success: false, error: 'Le mail est requis' });
         }
 
         const mailValid = await checkMail(mail);
-        res.status(201).json({ message: 'Mail vérifié : ' + mail, isMailValid: mailValid }); 
+        res.status(201).json({ success: true, message: 'Mail vérifié : ' + mail, isMailValid: mailValid }); 
 
     } catch (error) {
-        res.status(400).json({ error: 'Erreur lors de la vérification du mail', details: error });
+        res.status(400).json({ success: false, error: 'Erreur lors de la vérification du mail', details: error });
     }
 });
 
