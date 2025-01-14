@@ -82,7 +82,6 @@ router.post('/', async (req, res) => {
 
     try {
         const logs = await getAllLogs(quantity);
-        console.log(logs);
         res.status(201).json({ message: 'Logs récupérés', logs: logs }); 
 
     } catch (error) {

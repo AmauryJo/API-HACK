@@ -51,8 +51,6 @@ router.post('/', async (req, res) => {
 
     try {
         const tempFaker = await fakerJS(sex);
-        console.log(tempFaker);
-        const { firstName, lastName, fakeMail, job, phone, location, birthDate } = tempFaker;
         res.status(201).json({ success: true, result: tempFaker }); 
 
     } catch (error) {

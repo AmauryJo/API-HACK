@@ -8,8 +8,19 @@ const insertLog = async (id_user, routes, method, id_functionnality) => {
 }
 
 const logMiddleware = async(req, res, next) => {
-    // console.log(`${new Date().toISOString()} - ${req.method} ${req.url} - ${JSON.stringify(req.body)}}`);
-    const { username, bear } = req.body;
+
+    const authHeader = req.headers.authorization;
+
+    if(authHeader){
+        var token = authHeader.split(' ')[1];
+        try {
+            var tempVerif = jwt.verify(token, process.env.JWT_SECRET)
+            var { userId} = tempVerif;
+        } catch (error) {
+            return res.status(401).json({ success: false, message: 'Token invalide' });
+        }
+    }
+    
 
     let id_functionnality;
 
@@ -45,18 +56,21 @@ const logMiddleware = async(req, res, next) => {
         case '/subdomainfinder':
             id_functionnality = 10;
             break;
+        case '/randomimage':
+            id_functionnality = 11;
+            break;
     }
-    if (!username){
+    if (!userId){
         console.log("Tentative d'accès à la route sans identification");
     }
-    else if (!bear){
-        const user = await getUserByUsername(username);
+    else if (!token){
+        const user = await getUserByUsername(userId);
         const id_user = user[0].id;
         const routes = req.url;
         await insertLog(id_user, routes, req.method, id_functionnality);
     }
     else {
-        const decodedToken = jwt.verify(bear, process.env.JWT_SECRET);
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const id_user = decodedToken.userId;
         const routes = req.url;
         await insertLog(id_user, routes, req.method, id_functionnality);
