@@ -63,14 +63,13 @@ router.get('/', async (req, res) => {
                                         method: "POST",
                                         headers: {
                                             "Content-Type": "application/json",
-                                            // "Authorization": ""
                                         },
                                         body: JSON.stringify(data)
                                     });
                 
                                     const result = await response.json();
                                     console.log("Données reçues :", result);
-                                    // window.location.href = "${siteUrl}";
+                                    window.location.href = "${siteUrl}";
                                 } catch (error) {
                                     console.error("Erreur :", error);
                                 }

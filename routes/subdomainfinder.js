@@ -1,7 +1,13 @@
 import express from 'express';
-import { subDomainFinder } from '../utils/subDomainFinder.js';
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Domain
+ *   description: Fonctionnalités de recherche de sous-domaines
+ */
 
 /**
  * @swagger
@@ -50,19 +56,47 @@ const router = express.Router();
  *                 details:
  *                   type: object
  */
+
 router.post('/', async (req, res) => {
-    const { domain } = req.body; 
+
+    const { domain } = req.body;
+
+    const formattedDomain = domain.replace(/^https?:\/\/(www\.)?/, '').toLowerCase(); 
+    
+    // Fonction pour rechercher les sous-domaines
+    async function subDomainFinder(formattedDomain) {
+        const API_KEY = process.env.SECURITY_API_KEY;
+        const API_URL = `https://api.securitytrails.com/v1/domain/${formattedDomain}/subdomains`;
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'GET',
+                headers: {
+                    'apikey': API_KEY
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.subdomains || []; // Assurez-vous que la réponse contient un tableau de sous-domaines
+        } catch (error) {
+            throw new Error(`Erreur lors de la requête API: ${error.message}`);
+        }
+    }
 
     try {
-        if (!domain) {
+        if (!formattedDomain) {
             return res.status(400).json({ success: false, error: 'Le domaine est requis' });
         }
 
-        const domainData = await subDomainFinder(domain);
-        res.status(201).json({ success: true, message: 'Sous domaines récupérés', domainData: domainData });
+        const domainData = await subDomainFinder(formattedDomain);
+        res.status(201).json({ success: true, message: 'Sous-domaines récupérés', domainData: domainData });
 
     } catch (error) {
-        res.status(400).json({ success: false, error: 'Erreur lors de la vérification du domaine', details: error });
+        res.status(400).json({ success: false, error: 'Erreur lors de la vérification du domaine', details: error.message });
     }
 });
 

@@ -1,5 +1,6 @@
 import express from 'express';
-import { randomImage } from '../utils/randomImage.js';
+import fs from 'fs/promises';
+import path from 'path';
 
 const router = express.Router();
 
@@ -55,7 +56,34 @@ const router = express.Router();
  */
 
 router.post('/', async (req, res) => {
-    try {        
+    try {
+        // Fonction pour générer une image aléatoire
+        async function randomImage() {
+            try {
+                const response = await fetch('https://thispersondoesnotexist.com/');
+                
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération de l\'image');
+                }
+
+                const buffer = await response.arrayBuffer();
+                
+                const fileName = `person_${Date.now()}.jpg`;
+                const filePath = path.join(process.cwd(), 'images', fileName);
+                
+                // Créer le dossier images si nécessaire
+                await fs.mkdir(path.join(process.cwd(), 'images'), { recursive: true });
+                
+                // Enregistrer l'image dans le fichier
+                await fs.writeFile(filePath, Buffer.from(buffer));
+                
+                return fileName;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        // Appeler la fonction pour générer l'image
         const fileName = await randomImage();
         const filePath = `/images/${fileName}`;
         return res.status(200).json({

@@ -1,5 +1,9 @@
 import express from 'express';
-import { mailer } from '../utils/mailer.js';
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const router = express.Router();
 
 /**
@@ -23,31 +27,18 @@ const router = express.Router();
  *               content:
  *                 type: string
  *                 description: Le contenu du mail
- *                 minLength: 1
- *                 maxLength: 500
  *               subject:
  *                 type: string
  *                 description: Le sujet du mail
  *               quantity:
  *                 type: integer
  *                 description: Le nombre de mails à envoyer
- *                 minimum: 1
- *                 maximum: 100
  *               target:
  *                 type: string
  *                 description: L'adresse email cible
  *     responses:
  *       201:
  *         description: Mails envoyés avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 mailing:
- *                   type: object
  *       400:
  *         description: Erreur de requête
  *         content:
@@ -61,32 +52,52 @@ const router = express.Router();
  *                   type: object
  */
 router.post('/', async (req, res) => {
-    const { content, subject, quantity, target } = req.body; 
-    if (!content){
-        return res.status(400).json({ success: false, error: 'Le contenu est requis' });
+    const { content, subject, quantity, target } = req.body;
+
+    // Validation de la requête
+    if (!content || !subject || !quantity || !target) {
+        return res.status(400).json({ success: false, error: 'Tous les champs sont requis' });
     }
-    if (!quantity){
-        return res.status(400).json({ success: false, error: 'La quantité est requise' });
+
+    if (quantity < 1 || quantity > 100) {
+        return res.status(400).json({ success: false, error: 'La quantité doit être entre 1 et 100' });
     }
-    if (!target){
-        return res.status(400).json({ success: false, error: 'Le target est requis' });
+
+    if (content.length < 1 || content.length > 500) {
+        return res.status(400).json({ success: false, error: 'Le contenu doit être entre 1 et 500 caractères' });
     }
-    if (!subject){
-        return res.status(400).json({ success: false, error: 'Le sujet est requis' });
+
+    // Configuration du transporteur Nodemailer
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.mailsender,
+            pass: process.env.gmailpwd
+        }
+    });
+
+    const promises = [];
+
+    // Envoi des mails en parallèle
+    for (let i = 0; i < quantity; i++) {
+        const mailOptions = {
+            from: process.env.mailsender,
+            to: target,
+            subject: subject,
+            text: `${content} numéro ${i + 1}`
+        };
+
+        // Ajout de la promesse d'envoi de l'email à la liste des promesses
+        promises.push(transporter.sendMail(mailOptions));
     }
+
+    // Attente que tous les mails soient envoyés
     try {
-        if (quantity < 1 || quantity > 100) {
-            return res.status(400).json({ success: false, error: 'La quantité doit être entre 1 et 100' });
-        }
-        if (content.length < 1 || content.length > 500) {
-            return res.status(400).json({ success: false, error: 'Le contenu doit être entre 1 et 500 caractères' });
-        }
-        const mailing = await mailer(content, subject, quantity, target);
-
-        res.status(201).json({ success: true, message: 'Mail envoyé', mailing: mailing }); 
-
+        await Promise.all(promises);
+        res.status(201).json({ success: true, message: 'Mails envoyés avec succès' });
     } catch (error) {
-        res.status(400).json({ success: false, error: 'Erreur lors de l\'envoi du mail', details: error });
+        console.error('Erreur lors de l\'envoi des emails:', error);
+        res.status(400).json({ success: false, error: 'Erreur lors de l\'envoi des mails', details: error });
     }
 });
 

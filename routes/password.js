@@ -1,5 +1,4 @@
 import express from 'express';
-import { generateSecurePassword } from '../utils/passwordGenerator.js';
 
 const router = express.Router();
 
@@ -35,11 +34,29 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     const { length } = req.body; 
 
-    try {
-        if (length < 8 || length > 100) {
-            return res.status(400).json({ success: false, error: 'La longueur du mot de passe doit être entre 8 et 100 caractères' });
+    // Vérification que la longueur est valide
+    if (length < 8 || length > 100) {
+        return res.status(400).json({ success: false, error: 'La longueur du mot de passe doit être entre 8 et 100 caractères' });
+    }
+
+    // Fonction de génération de mot de passe sécurisé
+    function generateSecurePassword(length) {
+        if (typeof length !== 'number' || length <= 8 || length > 100) {
+            throw new Error('La longueur du mot de passe doit être entre 8 et 100 caractères');
         }
-        const generatedPassword = await generateSecurePassword(length);
+
+        const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]{}|;:,.<>?';
+        let password = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * charset.length);
+            password += charset[randomIndex];
+        }
+        return password;
+    }
+
+    try {
+        // Générer le mot de passe sécurisé
+        const generatedPassword = generateSecurePassword(length);
         res.status(201).json({ success: true, message: 'Mot de passe créé', password: generatedPassword }); 
 
     } catch (error) {

@@ -1,5 +1,5 @@
 import express from 'express';
-import { fakerJS } from '../utils/faker.js';
+import { fakerFR as faker } from '@faker-js/faker';
 
 const router = express.Router();
 
@@ -46,11 +46,25 @@ const router = express.Router();
  *       400:
  *         description: Erreur lors de la génération
  */
+
+// Fonction pour générer l'identité fictive
+async function fakerJS(sex) {
+    const firstName = faker.person.firstName((sex === 'male' ? 'male' : null));
+    const lastName = faker.person.lastName((sex === 'male' ? 'male' : null));
+    const fakeMail = faker.internet.email();
+    const job = faker.person.jobTitle();
+    const phone = faker.phone.number();
+    const location = faker.location.city();
+    const birthDate = faker.date.birthdate();
+    
+    return { firstName, lastName, fakeMail, job, phone, location, birthDate };
+}
+
 router.post('/', async (req, res) => {
     const { sex } = req.body; 
 
     try {
-        const tempFaker = await fakerJS(sex);
+        const tempFaker = await fakerJS(sex);  // Appel de la fonction fakerJS directement dans le routeur
         res.status(201).json({ success: true, result: tempFaker }); 
 
     } catch (error) {

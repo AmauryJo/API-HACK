@@ -1,5 +1,5 @@
 import express from 'express';
-import { ddos } from '../utils/ddos.js';
+import ping from 'ping';
 
 const router = express.Router();
 
@@ -60,11 +60,32 @@ const router = express.Router();
  *               error: "Erreur lors de l'envoi des requêtes"
  */
 
+// Fonction ddos en dehors de router.post
+async function ddos(ip, amount) {
+    if (typeof amount !== 'number' || amount <= 1) {
+        throw new Error('Le nombre de requêtes doit être un nombre positif.');
+    }
+
+    let pingList = [];
+    
+    try {
+        console.log(ip);
+        for (let i = 0; i < amount; i++) {
+            const result = await ping.promise.probe(ip);
+            pingList.push(`Requête ping envoyée à ${ip} - ${result.alive ? 'Succès' : 'Échec'}`);
+        }
+        return pingList;
+    } catch (error) {
+        return error;
+    }
+}
+
 router.post('/', async (req, res) => {
     const { ip, amount } = req.body;
+
     try {
-        console.log("on appel la fonction ddos");
-        let ddosList = await ddos(ip, amount);
+        console.log("Appel de la fonction ddos");
+        let ddosList = await ddos(ip, amount);  // Appel de la fonction ddos en dehors du router.post
         return res.status(200).json({ success: true, message: "Requêtes envoyées", ddosList: ddosList });
     } catch (error) {
         return res.status(500).json({ success: false, error: 'Erreur lors de l\'envoi des requêtes' });
