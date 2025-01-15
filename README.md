@@ -56,8 +56,8 @@ Une fois que tout est configuré, l'API sera disponible à l'adresse `http://loc
 
 ### 🔑 Identifiant Admin
 
-Utilisateur : `kevin`.
-Mot de passe : `niel`.
+Utilisateur : `kevin`
+Mot de passe : `niel`
 
 ### 🖥️ Technologies utilisées
 
