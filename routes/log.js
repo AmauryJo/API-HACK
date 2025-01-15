@@ -24,12 +24,7 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - bear
  *             properties:
- *               bear:
- *                 type: string
- *                 description: Token JWT admin
  *               quantity:
  *                 type: integer
  *                 default: 10
@@ -56,12 +51,8 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             required:
- *               - bear
  *               - id_user
  *             properties:
- *               bear:
- *                 type: string
- *                 description: Token JWT admin
  *               id_user:
  *                 type: integer
  *                 description: ID de l'utilisateur
@@ -82,10 +73,10 @@ router.post('/', async (req, res) => {
 
     try {
         const logs = await getAllLogs(quantity);
-        res.status(201).json({ message: 'Logs récupérés', logs: logs }); 
+        res.status(201).json({ success : true, message: 'Logs récupérés', logs: logs }); 
 
     } catch (error) {
-        res.status(400).json({ error: 'Erreur lors de la récupération des logs', details: error });
+        res.status(400).json({ success : false, error: 'Erreur lors de la récupération des logs', details: error });
     }
 });
 
@@ -97,9 +88,9 @@ router.post('/user', async (req, res) => {
             return res.status(401).json({ error: 'La quantité de logs maximum est de 100' });
         }
         const logs = await getLogsByUser(id_user, quantity);
-        res.status(201).json({ message: 'Logs récupérés', logs: logs });
+        res.status(201).json({ success : true, message: 'Logs récupérés', logs: logs });
     } catch (error) {
-        res.status(400).json({ error: 'Erreur lors de la récupération des logs', details: error });
+        res.status(400).json({ success : false, error: 'Erreur lors de la récupération des logs', details: error });
     }
 
 });

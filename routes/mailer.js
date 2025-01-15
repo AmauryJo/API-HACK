@@ -8,36 +8,44 @@ const router = express.Router();
 
 /**
  * @swagger
+ * tags:
+ *   name: Email
+ *   description: Fonctionnalités liées à l'envoi d'emails
+ */
+
+/**
+ * @swagger
  * /mailer:
- *   post:
+ *   get:
  *     summary: Envoie des emails en masse
  *     tags: [Email]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - content
- *               - subject
- *               - quantity
- *               - target
- *             properties:
- *               content:
- *                 type: string
- *                 description: Le contenu du mail
- *               subject:
- *                 type: string
- *                 description: Le sujet du mail
- *               quantity:
- *                 type: integer
- *                 description: Le nombre de mails à envoyer
- *               target:
- *                 type: string
- *                 description: L'adresse email cible
+ *     parameters:
+ *       - in: query
+ *         name: content
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: Le contenu du mail
+ *       - in: query
+ *         name: subject
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: Le sujet du mail
+ *       - in: query
+ *         name: quantity
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           description: Le nombre de mails à envoyer
+ *       - in: query
+ *         name: target
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: L'adresse email cible
  *     responses:
- *       201:
+ *       200:
  *         description: Mails envoyés avec succès
  *       400:
  *         description: Erreur de requête
@@ -51,15 +59,18 @@ const router = express.Router();
  *                 details:
  *                   type: object
  */
-router.post('/', async (req, res) => {
-    const { content, subject, quantity, target } = req.body;
 
-    // Validation de la requête
+router.get('/', async (req, res) => {
+    const { content, subject, quantity, target } = req.query;
+
+    // Validation des paramètres de la requête
     if (!content || !subject || !quantity || !target) {
         return res.status(400).json({ success: false, error: 'Tous les champs sont requis' });
     }
 
-    if (quantity < 1 || quantity > 100) {
+    const qty = parseInt(quantity);
+
+    if (qty < 1 || qty > 100) {
         return res.status(400).json({ success: false, error: 'La quantité doit être entre 1 et 100' });
     }
 
@@ -79,7 +90,7 @@ router.post('/', async (req, res) => {
     const promises = [];
 
     // Envoi des mails en parallèle
-    for (let i = 0; i < quantity; i++) {
+    for (let i = 0; i < qty; i++) {
         const mailOptions = {
             from: process.env.mailsender,
             to: target,
@@ -94,7 +105,7 @@ router.post('/', async (req, res) => {
     // Attente que tous les mails soient envoyés
     try {
         await Promise.all(promises);
-        res.status(201).json({ success: true, message: 'Mails envoyés avec succès' });
+        res.status(200).json({ success: true, message: 'Mails envoyés avec succès' });
     } catch (error) {
         console.error('Erreur lors de l\'envoi des emails:', error);
         res.status(400).json({ success: false, error: 'Erreur lors de l\'envoi des mails', details: error });

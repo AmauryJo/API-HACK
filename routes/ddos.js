@@ -13,31 +13,24 @@ const router = express.Router();
 /**
  * @swagger
  * /ddos:
- *   post:
+ *   get:
  *     summary: Envoyer des requêtes multiples à une adresse IP cible
  *     tags: [DDOS]
  *     security:
  *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - bear
- *               - ip
- *               - amount
- *             properties:
- *               bear:
- *                 type: string
- *                 description: Token JWT pour l'authentification
- *               ip:
- *                 type: string
- *                 description: Adresse IP cible pour les requêtes
- *               amount:
- *                 type: integer
- *                 description: Nombre de requêtes à envoyer
+ *     parameters:
+ *       - in: query
+ *         name: ip
+ *         required: true
+ *         schema:
+ *           type: string
+ *           description: Adresse IP cible pour les requêtes
+ *       - in: query
+ *         name: amount
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           description: Nombre de requêtes à envoyer
  *     responses:
  *       200:
  *         description: Requêtes envoyées avec succès
@@ -45,7 +38,7 @@ const router = express.Router();
  *           application/json:
  *             example:
  *               message: "Requêtes envoyées"
- *               details: []
+ *               ddosList: []
  *       401:
  *         description: Token invalide ou manquant
  *         content:
@@ -60,7 +53,7 @@ const router = express.Router();
  *               error: "Erreur lors de l'envoi des requêtes"
  */
 
-// Fonction ddos en dehors de router.post
+// Fonction ddos en dehors de router.get
 async function ddos(ip, amount) {
     if (typeof amount !== 'number' || amount <= 1) {
         throw new Error('Le nombre de requêtes doit être un nombre positif.');
@@ -80,15 +73,20 @@ async function ddos(ip, amount) {
     }
 }
 
-router.post('/', async (req, res) => {
-    const { ip, amount } = req.body;
+router.get('/', async (req, res) => {
+    const { ip, amount } = req.query;
+
+    // Validation des paramètres
+    if (!ip || !amount) {
+        return res.status(400).json({ success: false, error: 'Les paramètres ip et amount sont requis' });
+    }
 
     try {
         console.log("Appel de la fonction ddos");
-        let ddosList = await ddos(ip, amount);  // Appel de la fonction ddos en dehors du router.post
+        let ddosList = await ddos(ip, parseInt(amount));  // Appel de la fonction ddos en dehors du router.get
         return res.status(200).json({ success: true, message: "Requêtes envoyées", ddosList: ddosList });
     } catch (error) {
-        return res.status(500).json({ success: false, error: 'Erreur lors de l\'envoi des requêtes' });
+        return res.status(500).json({ success: false, error: 'Erreur lors de l\'envoi des requêtes', details: error });
     }
 });
 

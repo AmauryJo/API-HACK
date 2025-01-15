@@ -12,30 +12,28 @@ const router = express.Router();
 /**
  * @swagger
  * /subdomainfinder:
- *   post:
+ *   get:
  *     summary: Recherche les sous-domaines d'un domaine donné
  *     tags: [Domain]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - domain
- *             properties:
- *               domain:
- *                 type: string
- *                 description: Le domaine à analyser
- *                 example: "example.com"
+ *     parameters:
+ *       - in: query
+ *         name: domain
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "example.com"
+ *         description: Le domaine à analyser
  *     responses:
- *       201:
+ *       200:
  *         description: Sous-domaines trouvés avec succès
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
  *                 message:
  *                   type: string
  *                   description: Message de confirmation
@@ -51,18 +49,19 @@ const router = express.Router();
  *             schema:
  *               type: object
  *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
  *                 error:
  *                   type: string
  *                 details:
  *                   type: object
  */
+router.get('/', async (req, res) => {
+    const { domain } = req.query;
 
-router.post('/', async (req, res) => {
+    const formattedDomain = domain ? domain.replace(/^https?:\/\/(www\.)?/, '').toLowerCase() : null;
 
-    const { domain } = req.body;
-
-    const formattedDomain = domain.replace(/^https?:\/\/(www\.)?/, '').toLowerCase(); 
-    
     // Fonction pour rechercher les sous-domaines
     async function subDomainFinder(formattedDomain) {
         const API_KEY = process.env.SECURITY_API_KEY;
@@ -93,7 +92,7 @@ router.post('/', async (req, res) => {
         }
 
         const domainData = await subDomainFinder(formattedDomain);
-        res.status(201).json({ success: true, message: 'Sous-domaines récupérés', domainData: domainData });
+        res.status(200).json({ success: true, message: 'Sous-domaines récupérés', domainData: domainData });
 
     } catch (error) {
         res.status(400).json({ success: false, error: 'Erreur lors de la vérification du domaine', details: error.message });

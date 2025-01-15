@@ -6,23 +6,20 @@ const router = express.Router();
 /**
  * @swagger
  * /faker:
- *   post:
+ *   get:
  *     summary: Génère une identité fictive
  *     description: Crée une nouvelle identité fictive basée sur le sexe spécifié
  *     tags: [Faker]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               sex:
- *                 type: string
- *                 enum: ['male', 'female']
- *                 description: Le sexe de la personne fictive
+ *     parameters:
+ *       - in: query
+ *         name: sex
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: ['male', 'female']
+ *           description: Le sexe de la personne fictive
  *     responses:
- *       201:
+ *       200:
  *         description: Identité fictive générée avec succès
  *         content:
  *           application/json:
@@ -45,6 +42,18 @@ const router = express.Router();
  *                   type: string
  *       400:
  *         description: Erreur lors de la génération
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
  */
 
 // Fonction pour générer l'identité fictive
@@ -60,15 +69,28 @@ async function fakerJS(sex) {
     return { firstName, lastName, fakeMail, job, phone, location, birthDate };
 }
 
-router.post('/', async (req, res) => {
-    const { sex } = req.body; 
+router.get('/', async (req, res) => {
+    const { sex } = req.query;  // Lecture du paramètre sex dans la requête
+
+    // Validation de l'input
+    if (!sex || (sex !== 'male' && sex !== 'female')) {
+        return res.status(400).json({
+            success: false,
+            error: 'Le paramètre "sex" est requis et doit être "male" ou "female"',
+        });
+    }
 
     try {
-        const tempFaker = await fakerJS(sex);  // Appel de la fonction fakerJS directement dans le routeur
-        res.status(201).json({ success: true, result: tempFaker }); 
+        // Appel à la fonction fakerJS
+        const tempFaker = await fakerJS(sex);
+        res.status(200).json({ success: true, result: tempFaker }); 
 
     } catch (error) {
-        res.status(400).json({ success: false, error: "Erreur lors de la génération de l'identité ", details: error });
+        res.status(400).json({
+            success: false,
+            error: "Erreur lors de la génération de l'identité",
+            details: error.message,
+        });
     }
 });
 

@@ -7,33 +7,33 @@ const router = express.Router();
 /**
  * @swagger
  * /mailchecker:
- *   post:
+ *   get:
  *     summary: Vérifie la validité d'une adresse email
  *     tags: [Email]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - mail
- *             properties:
- *               mail:
- *                 type: string
- *                 description: L'adresse email à vérifier
+ *     parameters:
+ *       - in: query
+ *         name: mail
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: example@mail.com
+ *         description: L'adresse email à vérifier
  *     responses:
- *       201:
+ *       200:
  *         description: Email vérifié avec succès
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
  *                 message:
  *                   type: string
  *                 isMailValid:
- *                   type: boolean
+ *                   type: object
+ *                   description: Résultat de la vérification de l'email
  *       400:
  *         description: Erreur de requête
  *         content:
@@ -41,10 +41,13 @@ const router = express.Router();
  *             schema:
  *               type: object
  *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
  *                 error:
  *                   type: string
  *                 details:
- *                   type: object
+ *                   type: string
  */
 
 // Fonction pour vérifier la validité de l'email avec Hunter.io
@@ -66,38 +69,51 @@ async function checkMail(mail) {
         if (mailValid !== 'invalid') {
             return { mailValid, score };
         } else {
-            return false;  // Email invalide
+            return false; // Email invalide
         }
     } catch (error) {
         console.error('Erreur lors de la vérification de l\'email:', error);
-        return false;  // En cas d'erreur avec l'API
+        return false; // En cas d'erreur avec l'API
     }
 }
 
 // Route pour vérifier la validité de l'email
-router.post('/', async (req, res) => {
-    const { mail } = req.body; 
+router.get('/', async (req, res) => {
+    const { mail } = req.query; // Lecture du paramètre mail dans la requête
 
     // Validation de l'input
     if (!mail) {
-        return res.status(400).json({ success: false, error: 'Le mail est requis' });
+        return res.status(400).json({
+            success: false,
+            error: 'Le paramètre "mail" est requis',
+        });
     }
 
     try {
-        // Appel à la fonction checkMail dans le même fichier
+        // Appel à la fonction checkMail
         const mailValid = await checkMail(mail);
 
         // Si l'API retourne une erreur ou une valeur incorrecte
         if (!mailValid || typeof mailValid !== 'object') {
-            return res.status(400).json({ success: false, error: 'Erreur lors de la vérification du mail' });
+            return res.status(400).json({
+                success: false,
+                error: 'Erreur lors de la vérification du mail',
+            });
         }
 
-        res.status(201).json({ success: true, message: `Mail vérifié : ${mail}`, isMailValid: mailValid }); 
-
+        res.status(200).json({
+            success: true,
+            message: `Mail vérifié : ${mail}`,
+            isMailValid: mailValid,
+        });
     } catch (error) {
         // Gestion d'erreur plus détaillée
         console.error('Erreur lors de la vérification du mail:', error);
-        res.status(400).json({ success: false, error: 'Erreur lors de la vérification du mail', details: error.message });
+        res.status(400).json({
+            success: false,
+            error: 'Erreur lors de la vérification du mail',
+            details: error.message,
+        });
     }
 });
 

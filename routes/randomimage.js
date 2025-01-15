@@ -14,9 +14,20 @@ const router = express.Router();
 /**
  * @swagger
  * /random-image:
- *   post:
+ *   get:
  *     summary: Générer une image aléatoire
  *     tags: [Images]
+ *     parameters:
+ *       - in: query
+ *         name: size
+ *         required: false
+ *         schema:
+ *           type: string
+ *           description: Taille de l'image à générer (optionnel)
+ *           enum:
+ *             - small
+ *             - medium
+ *             - large
  *     responses:
  *       200:
  *         description: Image générée avec succès
@@ -55,7 +66,10 @@ const router = express.Router();
  *                   example: "Erreur lors de la génération de l'image"
  */
 
-router.post('/', async (req, res) => {
+router.get('/', async (req, res) => {
+    // Optionnel : gestion de la taille de l'image via la query string
+    const { size } = req.query;
+    
     try {
         // Fonction pour générer une image aléatoire
         async function randomImage() {
@@ -86,6 +100,8 @@ router.post('/', async (req, res) => {
         // Appeler la fonction pour générer l'image
         const fileName = await randomImage();
         const filePath = `/images/${fileName}`;
+
+        // Retourner la réponse
         return res.status(200).json({
             success: true,
             message: "Image générée avec succès",
