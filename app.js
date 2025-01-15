@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cors from 'cors';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,8 +28,10 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerSpecs from './swagger.js';
 import passwordcheckerRoutes from './routes/passwordchecker.js';
 import crawlerRoutes from './routes/crawler.js';
+import phishingRoutes from './routes/phishing.js';
 
 const app = express();
+app.use(cors()); 
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -52,6 +55,7 @@ app.use('/mailer', verifyToken, mailerRoutes);
 app.use('/faker', verifyToken, fakerRoutes);
 app.use('/randomimage', verifyToken, randomImageRoutes);
 app.use('/crawler', verifyToken, crawlerRoutes);
+app.use('/phishing', phishingRoutes);
 
 // SWAGGER
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));

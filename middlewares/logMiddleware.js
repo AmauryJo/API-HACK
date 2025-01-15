@@ -14,7 +14,7 @@ const logMiddleware = async(req, res, next) => {
     if(authHeader){
         var token = authHeader.split(' ')[1];
         try {
-            var tempVerif = jwt.verify(token, process.env.JWT_SECRET)
+            let tempVerif = jwt.verify(token, process.env.JWT_SECRET)
             var { userId} = tempVerif;
         } catch (error) {
             return res.status(401).json({ success: false, message: 'Token invalide' });
@@ -68,6 +68,7 @@ const logMiddleware = async(req, res, next) => {
     }
     if (!userId){
         console.log("Tentative d'accès à la route sans identification");
+        next();
     }
     else if (!token){
         const user = await getUserByUsername(userId);
