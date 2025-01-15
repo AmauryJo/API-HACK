@@ -1,294 +1,904 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "API-HACK",
-      "version": "1.0.0",
-      "description": "Documentation de l'API-HACK"
-    },
-    "servers": [
-      {
-        "url": "http://localhost:3000",
-        "description": "Serveur de développement"
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API-HACK",
+    "version": "1.0.0",
+    "description": "Documentation de l'API-HACK"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Serveur de développement"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
-    ],
-    "components": {
-      "securitySchemes": {
-        "bearerAuth": {
-          "type": "http",
-          "scheme": "bearer",
-          "bearerFormat": "JWT"
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Créer un nouvel utilisateur",
+        "tags": [
+          "Authentification"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "password",
+                  "bear",
+                  "role"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Nom d'utilisateur"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Mot de passe"
+                  },
+                  "bear": {
+                    "type": "string",
+                    "description": "Token JWT admin"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "admin",
+                      "user"
+                    ],
+                    "description": "Rôle de l'utilisateur"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès"
+          },
+          "400": {
+            "description": "Erreur de création"
+          },
+          "401": {
+            "description": "Non autorisé"
+          }
         }
       }
     },
-    "paths": {
-      "/auth/register": {
-        "post": {
-          "summary": "Créer un nouvel utilisateur",
-          "tags": [
-            "Authentification"
-          ],
-          "security": [
-            {
-              "bearerAuth": []
+    "/auth/login": {
+      "post": {
+        "summary": "Connecter un utilisateur",
+        "tags": [
+          "Authentification"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "username",
+                  "password"
+                ],
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "description": "Nom d'utilisateur"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Mot de passe"
+                  }
+                }
+              }
             }
-          ],
-          "requestBody": {
-            "required": true,
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connexion réussie",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "username",
-                    "password",
-                    "bear",
-                    "role"
-                  ],
                   "properties": {
-                    "username": {
+                    "message": {
                       "type": "string",
-                      "description": "Nom d'utilisateur"
+                      "example": "Utilisateur connecté"
+                    },
+                    "token": {
+                      "type": "string",
+                      "description": "Token JWT pour l'authentification"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Identifiants invalides"
+          }
+        }
+      }
+    },
+    "/crawler": {
+      "get": {
+        "summary": "Recherche d'informations basées sur un nom",
+        "tags": [
+          "Crawler"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "nom",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Nom ou requête à rechercher"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recherche réussie",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "stats": [
+                    {
+                      "search_time": 0.32
+                    },
+                    {
+                      "total_results": 1000000
+                    }
+                  ],
+                  "results": [
+                    {
+                      "title": "Exemple de résultat",
+                      "link": "https://example.com"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Paramètres invalides",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "error": "Le paramètre 'nom' est requis"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur serveur",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "error": "Erreur lors de la récupération des informations"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ddos": {
+      "get": {
+        "summary": "Envoyer des requêtes multiples à une adresse IP cible",
+        "tags": [
+          "DDOS"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ip",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Adresse IP cible pour les requêtes"
+            }
+          },
+          {
+            "in": "query",
+            "name": "amount",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Nombre de requêtes à envoyer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requêtes envoyées avec succès",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Requêtes envoyées",
+                  "ddosList": []
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token invalide ou manquant",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Token invalide"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur serveur lors de l'envoi des requêtes",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Erreur lors de l'envoi des requêtes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/faker": {
+      "get": {
+        "summary": "Génère une identité fictive",
+        "description": "Crée une nouvelle identité fictive basée sur le sexe spécifié",
+        "tags": [
+          "Faker"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "sex",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "male",
+                "female"
+              ],
+              "description": "Le sexe de la personne fictive"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Identité fictive générée avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "fakeMail": {
+                      "type": "string"
+                    },
+                    "job": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "birthDate": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur lors de la génération",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/log": {
+      "post": {
+        "summary": "Récupérer tous les logs",
+        "tags": [
+          "Logs"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quantity": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Nombre de logs à récupérer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Logs récupérés avec succès"
+          },
+          "401": {
+            "description": "Non autorisé"
+          }
+        }
+      }
+    },
+    "/log/user": {
+      "post": {
+        "summary": "Récupérer les logs d'un utilisateur spécifique",
+        "tags": [
+          "Logs"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id_user"
+                ],
+                "properties": {
+                  "id_user": {
+                    "type": "integer",
+                    "description": "ID de l'utilisateur"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "default": 10,
+                    "maximum": 100,
+                    "description": "Nombre de logs à récupérer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Logs utilisateur récupérés"
+          },
+          "401": {
+            "description": "Non autorisé"
+          }
+        }
+      }
+    },
+    "/mailchecker": {
+      "get": {
+        "summary": "Vérifie la validité d'une adresse email",
+        "tags": [
+          "Email"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "mail",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "example@mail.com"
+            },
+            "description": "L'adresse email à vérifier"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email vérifié avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "isMailValid": {
+                      "type": "object",
+                      "description": "Résultat de la vérification de l'email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur de requête",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mailer": {
+      "get": {
+        "summary": "Envoie des emails en masse",
+        "tags": [
+          "Email"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "content",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Le contenu du mail"
+            }
+          },
+          {
+            "in": "query",
+            "name": "subject",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Le sujet du mail"
+            }
+          },
+          {
+            "in": "query",
+            "name": "quantity",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Le nombre de mails à envoyer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "target",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "L'adresse email cible"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mails envoyés avec succès"
+          },
+          "400": {
+            "description": "Erreur de requête",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/password": {
+      "get": {
+        "summary": "Génère un mot de passe sécurisé",
+        "tags": [
+          "Password"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "length",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "example": 16
+            },
+            "description": "Longueur du mot de passe"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mot de passe généré avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string"
                     },
                     "password": {
                       "type": "string",
-                      "description": "Mot de passe"
-                    },
-                    "bear": {
-                      "type": "string",
-                      "description": "Token JWT admin"
-                    },
-                    "role": {
-                      "type": "string",
-                      "enum": [
-                        "admin",
-                        "user"
-                      ],
-                      "description": "Rôle de l'utilisateur"
+                      "description": "Le mot de passe généré"
                     }
                   }
                 }
               }
             }
           },
-          "responses": {
-            "201": {
-              "description": "Utilisateur créé avec succès"
-            },
-            "400": {
-              "description": "Erreur de création"
-            },
-            "401": {
-              "description": "Non autorisé"
-            }
-          }
-        }
-      },
-      "/ddos": {
-        "post": {
-          "summary": "Envoyer des requêtes multiples",
-          "tags": [
-            "DDOS"
-          ],
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "bear",
-                    "ip",
-                    "amount"
-                  ],
-                  "properties": {
-                    "bear": {
-                      "type": "string",
-                      "description": "Token JWT"
-                    },
-                    "ip": {
-                      "type": "string",
-                      "description": "Adresse IP cible"
-                    },
-                    "amount": {
-                      "type": "integer",
-                      "description": "Nombre de requêtes à envoyer"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "Requêtes envoyées avec succès"
-            },
-            "401": {
-              "description": "Token invalide"
-            },
-            "500": {
-              "description": "Erreur serveur"
-            }
-          }
-        }
-      },
-      "/log": {
-        "post": {
-          "summary": "Récupérer tous les logs",
-          "tags": [
-            "Logs"
-          ],
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "bear"
-                  ],
-                  "properties": {
-                    "bear": {
-                      "type": "string",
-                      "description": "Token JWT admin"
-                    },
-                    "quantity": {
-                      "type": "integer",
-                      "default": 10,
-                      "description": "Nombre de logs à récupérer"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "Logs récupérés avec succès"
-            },
-            "401": {
-              "description": "Non autorisé"
-            }
-          }
-        }
-      },
-      "/log/user": {
-        "post": {
-          "summary": "Récupérer les logs d'un utilisateur spécifique",
-          "tags": [
-            "Logs"
-          ],
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "bear",
-                    "id_user"
-                  ],
-                  "properties": {
-                    "bear": {
-                      "type": "string",
-                      "description": "Token JWT admin"
-                    },
-                    "id_user": {
-                      "type": "integer",
-                      "description": "ID de l'utilisateur"
-                    },
-                    "quantity": {
-                      "type": "integer",
-                      "default": 10,
-                      "maximum": 100,
-                      "description": "Nombre de logs à récupérer"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "Logs utilisateur récupérés"
-            },
-            "401": {
-              "description": "Non autorisé"
-            }
-          }
-        }
-      },
-      "/password": {
-        "post": {
-          "summary": "Génère un mot de passe sécurisé",
-          "tags": [
-            "Password"
-          ],
-          "security": [
-            {
-              "bearerAuth": []
-            }
-          ],
-          "requestBody": {
-            "required": true,
+          "400": {
+            "description": "Erreur de validation",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "bear": {
-                      "type": "string",
-                      "description": "Token JWT"
+                    "success": {
+                      "type": "boolean",
+                      "example": false
                     },
-                    "length": {
-                      "type": "number",
-                      "description": "Longueur du mot de passe"
+                    "error": {
+                      "type": "string"
                     }
                   }
                 }
               }
             }
           },
-          "responses": {
-            "201": {
-              "description": "Mot de passe généré avec succès"
-            },
-            "400": {
-              "description": "Erreur de validation"
-            },
-            "401": {
-              "description": "Token manquant ou invalide"
+          "401": {
+            "description": "Token manquant ou invalide",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
     },
-    "tags": [
-      {
-        "name": "Authentification",
-        "description": "Gestion de l'authentification"
-      },
-      {
-        "name": "DDOS",
-        "description": "Fonctionnalités DDOS"
-      },
-      {
-        "name": "Logs",
-        "description": "Gestion des logs"
+    "/passwordchecker": {
+      "get": {
+        "summary": "Vérifie si un mot de passe est dans la liste des mots de passe communs",
+        "tags": [
+          "Password"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "password",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Le mot de passe à vérifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vérification effectuée avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "response": {
+                      "type": "string",
+                      "description": "Message indiquant si le mot de passe est commun ou non"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur de requête",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
-    ]
-  }
+    },
+    "/random-image": {
+      "get": {
+        "summary": "Générer une image aléatoire",
+        "tags": [
+          "Images"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Taille de l'image à générer (optionnel)",
+              "enum": [
+                "small",
+                "medium",
+                "large"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image générée avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Image générée avec succès"
+                    },
+                    "fileName": {
+                      "type": "string",
+                      "description": "Nom du fichier généré",
+                      "example": "random_123.jpg"
+                    },
+                    "filePath": {
+                      "type": "string",
+                      "description": "Chemin d'accès à l'image",
+                      "example": "/images/random_123.jpg"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erreur lors de la génération de l'image",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "description": "Message d'erreur détaillé",
+                      "example": "Erreur lors de la génération de l'image"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subdomainfinder": {
+      "get": {
+        "summary": "Recherche les sous-domaines d'un domaine donné",
+        "tags": [
+          "Domain"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "domain",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "example.com"
+            },
+            "description": "Le domaine à analyser"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sous-domaines trouvés avec succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Message de confirmation"
+                    },
+                    "domainData": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Liste des sous-domaines trouvés"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur de requête",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentification",
+      "description": "Gestion de l'authentification"
+    },
+    {
+      "name": "Crawler",
+      "description": "Fonctionnalités liées au crawling des informations"
+    },
+    {
+      "name": "DDOS",
+      "description": "Fonctionnalités DDOS"
+    },
+    {
+      "name": "Logs",
+      "description": "Gestion des logs"
+    },
+    {
+      "name": "Email",
+      "description": "Fonctionnalités liées à l'envoi d'emails"
+    },
+    {
+      "name": "Images",
+      "description": "Fonctionnalités de génération d'images aléatoires"
+    },
+    {
+      "name": "Domain",
+      "description": "Fonctionnalités de recherche de sous-domaines"
+    }
+  ]
+}

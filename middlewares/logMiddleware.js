@@ -73,13 +73,14 @@ const logMiddleware = async(req, res, next) => {
     else if (!token){
         const user = await getUserByUsername(userId);
         const id_user = user[0].id;
-        const routes = req.url;
+        const routes = req.url.split('?')[0];
+        
         await insertLog(id_user, routes, req.method, id_functionnality);
     }
     else {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const id_user = decodedToken.userId;
-        const routes = req.url;
+        const routes = req.url.split('?')[0];
         await insertLog(id_user, routes, req.method, id_functionnality);
     }
     next();
