@@ -59,6 +59,12 @@ const logMiddleware = async(req, res, next) => {
         case '/randomimage':
             id_functionnality = 11;
             break;
+        case '/crawler':
+            id_functionnality = 12;
+            break;
+        case '/phishing':
+            id_functionnality = 13;
+            break;
     }
     if (!userId){
         console.log("Tentative d'accès à la route sans identification");

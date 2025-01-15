@@ -1,5 +1,5 @@
 export async function subDomainFinder(domain) {
-    const API_KEY = 'V2giPf5e_CTo7izdX_odccLnKAh8JUPH';
+    const API_KEY = process.env.SECURITY_API_KEY;
     const API_URL = `https://api.securitytrails.com/v1/domain/${domain}/subdomains`;
 
     try {

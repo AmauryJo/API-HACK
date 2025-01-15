@@ -26,6 +26,7 @@ import randomImageRoutes from './routes/randomimage.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpecs from './swagger.js';
 import passwordcheckerRoutes from './routes/passwordchecker.js';
+import crawlerRoutes from './routes/crawler.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -50,6 +51,7 @@ app.use('/subdomainfinder', verifyToken, subdomainfinderRoutes);
 app.use('/mailer', verifyToken, mailerRoutes);
 app.use('/faker', verifyToken, fakerRoutes);
 app.use('/randomimage', verifyToken, randomImageRoutes);
+app.use('/crawler', verifyToken, crawlerRoutes);
 
 // SWAGGER
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));

@@ -25,6 +25,7 @@
     "nodemailer": "^6.9.16",
     "nodemon": "^3.1.7",
     "ping": "^0.4.4",
+    "serpapi": "^2.1.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   }
