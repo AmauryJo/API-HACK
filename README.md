@@ -36,7 +36,7 @@ git clone https://github.com/AmauryJo/API-HACK.git
 ```
 
 ### 4️⃣ Installation des dépendances
-Une fois dans le répertoire du projet, installez les dépendances nécessaires avec npm :
+Rendez-vous dans le répertoire du projet, installez les dépendances nécessaires avec npm :
 
 ```bash
 cd API-HACK
@@ -52,6 +52,12 @@ npm run dev
 ### 🚀 Lancer l'API
 
 Une fois que tout est configuré, l'API sera disponible à l'adresse `http://localhost:3000` (par défaut).
+
+
+### 🔑 Identifiant Admin
+
+Utilisateur : `kevin`.
+Mot de passe : `niel`.
 
 ### 🖥️ Technologies utilisées
 
